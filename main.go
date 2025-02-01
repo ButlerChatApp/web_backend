@@ -1,20 +1,16 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	routes "butler_backend/routes"
+	"log"
 )
 
 func main() {
-	r := gin.Default()
+	r := routes.Router()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	if  err := r.Run(":8080"); err != nil {
+		log.Fatalf("Failed to run application: %v", err)
+	}
 
 	r.Run(":8080")
 }
