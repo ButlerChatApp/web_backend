@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - air-config:/root/.air
+    ports:
+      - "8080:8080"
+volumes:
+  air-config:
