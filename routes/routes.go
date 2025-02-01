@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	controllers "butler_backend/controllers"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -19,10 +21,19 @@ func Router() *gin.Engine {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
 	r.GET("/api/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello from Butler",
+			"message": "Hello from Butler !!!",
 		})
+	})
+
+	r.POST("/api/signup", func(c *gin.Context) {
+		controllers.HandleSignUp(c)
+	})
+
+	r.POST("/api/signin", func(c *gin.Context) {
+		controllers.HandleSignIn(c)
 	})
 
 	return r
