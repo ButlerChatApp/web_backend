@@ -16,9 +16,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var users = make(map[string]string) // email -> hashed password
-var userNames = make(map[string]string) // email -> userName
-
 func generateFirebaseUID(email string) string {
 	hash := sha256.New()
 	hash.Write([]byte(strings.ToLower(email)))
@@ -43,7 +40,7 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	ctx := context.Background()
 	client, err := utils.NewFirestoreClient()
 	if err != nil {
-		return structs.SignUpRes{Message: "Failed to connect to Firestore"}
+		return structs.SignUpRes{Message: "Failed to connect to Firestore."}
 	}
 	defer client.Close()
 
@@ -78,38 +75,40 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 }
 
 func SignIn(email, password string) structs.SignInRes {
-	var req structs.SignInReq
+	ctx := context.Background()
+	client, err := utils.NewFirestoreClient()
+	if err != nil {
+		return structs.SignInRes{Message: "Failed to connect to Firestore."}
+	}
+	defer client.Close()
 
 	// ユーザー確認
-	storedPassword, exists := users[req.Email]
-	if !exists {
-		res := structs.SignInRes{
-			Message: "Invalid credentials.",
-		}
-		return res
+	iter := client.Collection("users").Where("email", "==", email).Documents(ctx)
+	doc, err := iter.Next()
+	// ユーザーが存在しない場合
+	if err != nil || !doc.Exists() {
+		return structs.SignInRes{Message: "Invalid credentials."}
 	}
+
+	storedPassword := doc.Data()["hashed_password"].(string)
+	userName := doc.Data()["name"].(string)
 
 	// パスワード認証
-	if !utils.CheckPasswordHash(req.Password, storedPassword) {
-		res := structs.SignInRes{
-			Message: "Invalid credentials.",
-		}
-		return res
+	if !utils.CheckPasswordHash(password, storedPassword) {
+		return structs.SignInRes{Message: "Invalid credentials."}
 	}
 
-	// JWTトークン発行
-	token, err := generateJWT(userNames[req.Email])
+	// JWT発行
+	token, err := generateJWT(userName)
 	if err != nil {
-		res := structs.SignInRes{
-			Message: "Failed to generate token:" + err.Error(),
+		return structs.SignInRes{
+			Message: "Failed to generate token: " + err.Error(),
 		}
-		return res
 	}
 
-	res := structs.SignInRes{
-		UserName: userNames[req.Email],
-		Message: "Successfully signed in.",
-		Token: token,
+	return structs.SignInRes{
+		UserName: userName,
+		Message:  "Successfully signed in.",
+		Token:    token,
 	}
-	return res
 }
