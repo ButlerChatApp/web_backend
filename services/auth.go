@@ -4,6 +4,10 @@ import (
 	"log"
 	"os"
 	"time"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"strings"
 
 	structs "butler_backend/structs"
 	utils "butler_backend/utils"
@@ -14,6 +18,12 @@ import (
 
 var users = make(map[string]string) // email -> hashed password
 var userNames = make(map[string]string) // email -> userName
+
+func generateFirebaseUID(email string) string {
+	hash := sha256.New()
+	hash.Write([]byte(strings.ToLower(email)))
+	return hex.EncodeToString(hash.Sum(nil))
+}
 
 func generateJWT(userName string) (string, error) {
 	if err:= godotenv.Load(".env"); err != nil {
@@ -30,35 +40,41 @@ func generateJWT(userName string) (string, error) {
 }
 
 func SignUp(userName, email, password string) structs.SignUpRes {
-	var req structs.SignUpReq
+	ctx := context.Background()
+	client, err := utils.NewFirestoreClient()
+	if err != nil {
+		return structs.SignUpRes{Message: "Failed to connect to Firestore"}
+	}
+	defer client.Close()
 
 	// すでに登録されているか確認
-	if _, exists := users[email]; exists {
-		res := structs.SignUpRes{
-			Message: "User already exists.",
-		}
-		return res
+	iter := client.Collection("users").Where("email", "==", email).Documents(ctx)
+	doc, err := iter.Next()
+	if err == nil && doc.Exists() {
+		return structs.SignUpRes{Message: "User already exists."}
 	}
 
 	// パスワードをハッシュ化
-	hashedPassword, err := utils.HashPassword(req.Password)
-
+	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
-		res := structs.SignUpRes{
-			Message: "Failed to hash password" + err.Error(),
-		}
-		return res
+		return structs.SignUpRes{Message: "Failed to hash password: " + err.Error()}
 	}
 
-	// ユーザーを保存
-	users[req.Email] = string(hashedPassword)
-	userNames[req.Email] = req.UserName
-
-	res := structs.SignUpRes{
-		UserName: req.UserName,
-		Message: "Successfully signed up.",
+	// Firestore にユーザー情報を保存
+	uid := generateFirebaseUID(email)
+	_, err = client.Collection("users").Doc(uid).Set(ctx, map[string]interface{}{
+		"email":          email,
+		"hashed_password": hashedPassword,
+		"name":           userName,
+	})
+	if err != nil {
+		return structs.SignUpRes{Message: "Failed to save user: " + err.Error()}
 	}
-	return res
+
+	return structs.SignUpRes{
+		UserName: userName,
+		Message:  "Successfully signed up.",
+	}
 }
 
 func SignIn(email, password string) structs.SignInRes {
