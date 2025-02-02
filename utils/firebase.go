@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	firebase "firebase.google.com/go"
 	"cloud.google.com/go/firestore"
+	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
 )
 

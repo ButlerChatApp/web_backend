@@ -1,13 +1,13 @@
 package services
 
 import (
-	"log"
-	"os"
-	"time"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"log"
+	"os"
 	"strings"
+	"time"
 
 	structs "butler_backend/structs"
 	utils "butler_backend/utils"
@@ -23,7 +23,7 @@ func generateFirebaseUID(email string) string {
 }
 
 func generateJWT(userName string) (string, error) {
-	if err:= godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Failed to load .env: %v", err)
 	}
 
@@ -60,9 +60,9 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	// Firestore にユーザー情報を保存
 	uid := generateFirebaseUID(email)
 	_, err = client.Collection("users").Doc(uid).Set(ctx, map[string]interface{}{
-		"email":          email,
+		"email":           email,
 		"hashed_password": hashedPassword,
-		"name":           userName,
+		"name":            userName,
 	})
 	if err != nil {
 		return structs.SignUpRes{Message: "Failed to save user: " + err.Error()}
