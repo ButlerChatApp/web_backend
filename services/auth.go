@@ -16,12 +16,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func generateFirebaseUID(email string) string {
-	hash := sha256.New()
-	hash.Write([]byte(strings.ToLower(email)))
-	return hex.EncodeToString(hash.Sum(nil))
-}
-
 func generateJWT(userName string) (string, error) {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Failed to load .env: %v", err)
@@ -58,7 +52,7 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	}
 
 	// Firestore にユーザー情報を保存
-	uid := generateFirebaseUID(email)
+	uid := utils.generateFirebaseUID(email)
 	_, err = client.Collection("users").Doc(uid).Set(ctx, map[string]interface{}{
 		"email":           email,
 		"hashed_password": hashedPassword,
