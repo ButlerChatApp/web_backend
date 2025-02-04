@@ -20,7 +20,7 @@ func HandleSignUp(c *gin.Context) {
 	}
 
 	result := services.SignUp(req.UserName, req.Email, req.Password)
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusCreated, result)
 }
 
 func HandleSignIn(c *gin.Context) {
