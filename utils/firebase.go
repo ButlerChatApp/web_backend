@@ -3,6 +3,9 @@ package utils
 import (
 	"context"
 	"log"
+	"crypto/sha256"
+	"encoding/hex"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
@@ -30,4 +33,10 @@ func NewFirestoreClient() (*firestore.Client, error) {
 
 	log.Println("Firestore client created successfully.")
 	return client, nil
+}
+
+func GenerateFirebaseUID(email string) string {
+	hash := sha256.New()
+	hash.Write([]byte(strings.ToLower(email)))
+	return hex.EncodeToString(hash.Sum(nil))
 }
