@@ -2,9 +2,9 @@ package utils
 
 import (
 	"context"
-	"log"
 	"crypto/sha256"
 	"encoding/hex"
+	"log"
 	"strings"
 
 	"cloud.google.com/go/firestore"

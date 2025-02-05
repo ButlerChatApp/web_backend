@@ -20,12 +20,12 @@ func ChatCreation(chatType, chatName string, participants []structs.Participant)
 
 	chatId := uuid.New().String()
 	chatData := map[string]interface{}{
-		"chatId":      chatId,
-		"type":        chatType,
-		"chatName":    chatName,
+		"chatId":       chatId,
+		"type":         chatType,
+		"chatName":     chatName,
 		"participants": participants,
-		"createdAt":   time.Now(),
-		"updatedAt":   time.Now(),
+		"createdAt":    time.Now(),
+		"updatedAt":    time.Now(),
 	}
 
 	_, err = client.Collection("chats").Doc(chatId).Set(ctx, chatData)
@@ -42,8 +42,6 @@ func ChatCreation(chatType, chatName string, participants []structs.Participant)
 
 	return response, nil
 }
-
-
 
 func GetAllChats() (structs.GetAllChatsRes, error) {
 	ctx := context.Background()

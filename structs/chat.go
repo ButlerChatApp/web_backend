@@ -9,15 +9,15 @@ type Participant struct {
 }
 
 type ChatCreationReq struct {
-	Type string `json:"type" binding:"required"`
-	ChatName string `json:"chatName"`
-	Participants []Participant`json:"participants" binding:"required"`
+	Type         string        `json:"type" binding:"required"`
+	ChatName     string        `json:"chatName"`
+	Participants []Participant `json:"participants" binding:"required"`
 }
 
 type ChatCreationRes struct {
-	ChatId string `json:"chatId" binding:"required"`
-	Type string `json:"type" binding:"required"`
-	ChatName string `json:"chatName"`
+	ChatId       string        `json:"chatId" binding:"required"`
+	Type         string        `json:"type" binding:"required"`
+	ChatName     string        `json:"chatName"`
 	Participants []Participant `json:"participants" binding:"required"`
 }
 
