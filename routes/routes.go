@@ -36,5 +36,13 @@ func Router() *gin.Engine {
 		controllers.HandleSignIn(c)
 	})
 
+	r.GET("/api/chats", func(c *gin.Context) {
+		controllers.HandleGetAllChats(c)
+	})
+
+	r.POST("/api/chats", func(c *gin.Context) {
+		controllers.HandleChatCreation(c)
+	})
+
 	return r
 }
