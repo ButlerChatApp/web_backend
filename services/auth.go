@@ -2,11 +2,8 @@ package services
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	structs "butler_backend/structs"
@@ -52,7 +49,7 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	}
 
 	// Firestore にユーザー情報を保存
-	uid := utils.generateFirebaseUID(email)
+	uid := utils.GenerateFirebaseUID(email)
 	_, err = client.Collection("users").Doc(uid).Set(ctx, map[string]interface{}{
 		"email":           email,
 		"hashed_password": hashedPassword,
