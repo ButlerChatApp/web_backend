@@ -24,3 +24,8 @@ type ChatCreationRes struct {
 type GetAllChatsRes struct {
 	Chats []Chat `json:"chats" binding:"required"`
 }
+
+type EditMessageRes struct {
+	MessageId string `json:"chatId" binding:"required"`
+	NewContent string `json:"newContent"`
+}

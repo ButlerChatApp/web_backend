@@ -44,5 +44,21 @@ func Router() *gin.Engine {
 		controllers.HandleChatCreation(c)
 	})
 
+	r.POST("/api/messages", func(c *gin.Context) {
+		controllers.HandlePostMessage(c)
+	})
+
+	r.GET("/api/messages", func(c *gin.Context) {
+		controllers.HandleGetMessages(c)
+	})
+
+	r.PUT("/api/messages", func(c *gin.Context) {
+		controllers.HandleEditMessage(c)
+	})
+
+	r.DELETE("/api/messages", func(c *gin.Context) {
+		controllers.HandleDeleteMessage(c)
+	})
+
 	return r
 }
