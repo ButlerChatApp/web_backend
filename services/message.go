@@ -103,10 +103,10 @@ func EditMessage(messageId, newContent string) (structs.EditMessageRes, error) {
 	}
 
 	response := structs.EditMessageRes{
-		MessageId: messageId,
+		MessageId:  messageId,
 		NewContent: newContent,
 	}
-	
+
 	return response, nil
 }
 

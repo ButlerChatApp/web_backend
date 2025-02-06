@@ -26,6 +26,6 @@ type GetAllChatsRes struct {
 }
 
 type EditMessageRes struct {
-	MessageId string `json:"chatId" binding:"required"`
+	MessageId  string `json:"chatId" binding:"required"`
 	NewContent string `json:"newContent"`
 }
