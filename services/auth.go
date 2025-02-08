@@ -60,7 +60,7 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	}
 
 	return structs.SignUpRes{
-		Uid: uid,
+		Uid:      uid,
 		UserName: userName,
 		Message:  "Successfully signed up.",
 	}
@@ -100,7 +100,7 @@ func SignIn(email, password string) structs.SignInRes {
 	}
 
 	return structs.SignInRes{
-		Uid: uid,
+		Uid:      uid,
 		UserName: userName,
 		Message:  "Successfully signed in.",
 		Token:    token,

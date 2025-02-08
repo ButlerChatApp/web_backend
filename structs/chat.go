@@ -1,9 +1,9 @@
 package structs
 
 type Chat struct {
-	ChatId string `json:"chatId" binding:"required"`
-	ChatName string `json:"chatName" binding:"required"`
-	Type string `json:"type" binding:"required"`
+	ChatId       string        `json:"chatId" binding:"required"`
+	ChatName     string        `json:"chatName" binding:"required"`
+	Type         string        `json:"type" binding:"required"`
 	Participants []Participant `json:"participants" binding:"required"`
 }
 

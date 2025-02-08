@@ -61,7 +61,7 @@ func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
 	var chats []structs.Chat
 	for _, doc := range docs {
 		data := doc.Data()
-		
+
 		// chatIdとtypeが存在しない場合はスキップ
 		chatId, ok := data["chatId"].(string)
 		chatType, ok := data["type"].(string)
@@ -72,7 +72,7 @@ func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
 
 		chat := structs.Chat{
 			ChatId: chatId,
-			Type: chatType,
+			Type:   chatType,
 		}
 
 		// Participantsを手動で設定
