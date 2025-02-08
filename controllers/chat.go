@@ -28,9 +28,16 @@ func HandleChatCreation(c *gin.Context) {
 }
 
 func HandleGetAllChats(c *gin.Context) {
-	result, err := services.GetAllChats()
+	uid := c.Query("uid")
+	if uid == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "'uid is required.",
+		})
+		return
+	}
+	result, err := services.GetAllChats(uid)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 	c.JSON(http.StatusOK, result)

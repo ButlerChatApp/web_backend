@@ -2,10 +2,13 @@ package structs
 
 type Chat struct {
 	ChatId string `json:"chatId" binding:"required"`
+	ChatName string `json:"chatName" binding:"required"`
+	Type string `json:"type" binding:"required"`
+	Participants []Participant `json:"participants" binding:"required"`
 }
 
 type Participant struct {
-	Uid string `json:"uid" binding:"required"`
+	Uid string `json:"Uid" binding:"required"`
 }
 
 type ChatCreationReq struct {

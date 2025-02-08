@@ -7,6 +7,7 @@ type SignUpReq struct {
 }
 
 type SignUpRes struct {
+	Uid string `json:"uid" binding:"required"`
 	UserName string `json:"userName"`
 	Message  string `json:"message" binding:"required"`
 }
@@ -17,6 +18,7 @@ type SignInReq struct {
 }
 
 type SignInRes struct {
+	Uid string `json:"uid" binding:"required"`
 	UserName string `json:"userName"`
 	Message  string `json:"message" binding:"required"`
 	Token    string `json:"token"`

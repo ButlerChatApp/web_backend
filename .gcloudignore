@@ -1,0 +1,8 @@
+.git
+.gitignore
+*.md
+/test
+.env
+
+!go.mod
+!go.sum
