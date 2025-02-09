@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 	"time"
 
 	structs "butler_backend/structs"
@@ -50,6 +51,11 @@ func PostMessage(chatId, senderId, content string) (structs.PostMessageRes, erro
 	}
 	defer client.Close()
 
+	senderName, err := getUserName(senderId)
+	if err != nil {
+		return structs.PostMessageRes{}, err
+	}
+
 	messageId := uuid.New().String()
 	jst, _ := time.LoadLocation("Asia/Tokyo")
 	timestamp := time.Now().In(jst)
@@ -57,6 +63,7 @@ func PostMessage(chatId, senderId, content string) (structs.PostMessageRes, erro
 		"messageId": messageId,
 		"chatId":    chatId,
 		"senderId":  senderId,
+		"senderName": senderName,
 		"content":   content,
 		"timestamp": timestamp,
 	}
@@ -134,4 +141,28 @@ func DeleteMessage(messageId string) (structs.DeleteMessageRes, error) {
 	}
 
 	return response, nil
+}
+
+
+func getUserName(uid string) (string, error) {
+	ctx := context.Background()
+	client, err := utils.NewFirestoreClient()
+	if err != nil {
+		return "", err
+	}
+	defer client.Close()
+
+	doc, err := client.Collection("users").Doc(uid).Get(ctx)
+	if err != nil {
+		log.Printf("Failed to get user document: %v", err)
+		return "", err
+	}
+
+	var user structs.User
+	if err := doc.DataTo(&user); err != nil {
+		log.Printf("Failed to parse user data: %v", err)
+		return "", err
+	}
+
+	return user.Name, nil
 }
