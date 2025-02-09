@@ -67,5 +67,17 @@ func Router() *gin.Engine {
 		controllers.HandleDeleteMessage(c)
 	})
 
+	r.GET("/api/summary", func(c *gin.Context) {
+		controllers.HandleGetSummaries(c)
+	})
+
+	r.GET("/api/summary/details", func(c *gin.Context) {
+		controllers.HandleGetSelectedSummary(c)
+	})
+
+	r.POST("/api/summary", func(c *gin.Context) {
+		controllers.HandleRequestSummary(c)
+	})
+
 	return r
 }

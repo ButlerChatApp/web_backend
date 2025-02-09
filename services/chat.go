@@ -11,13 +11,24 @@ import (
 	"github.com/google/uuid"
 )
 
-func ChatCreation(chatType, chatName string, participants []structs.Participant) (structs.ChatCreationRes, error) {
+func ChatCreation(chatType, chatName, chatCreatorId string, participantsEmails []structs.ParticipantsEmail) (structs.ChatCreationRes, error) {
 	ctx := context.Background()
 	client, err := utils.NewFirestoreClient()
 	if err != nil {
 		return structs.ChatCreationRes{}, err
 	}
 	defer client.Close()
+
+	var participants []structs.Participant
+	for i := 0; i < len(participantsEmails); i++ {
+		participants = append(participants, structs.Participant{
+			Uid: getUid(participantsEmails[i].Email),
+		})
+	}
+
+	participants = append(participants, structs.Participant{
+		Uid: chatCreatorId,
+	})
 
 	chatId := uuid.New().String()
 	chatData := map[string]interface{}{
@@ -44,7 +55,7 @@ func ChatCreation(chatType, chatName string, participants []structs.Participant)
 	return response, nil
 }
 
-func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
+func GetAllChats(uid, selectedType string) (structs.GetAllChatsRes, error) {
 	ctx := context.Background()
 	client, err := utils.NewFirestoreClient()
 	if err != nil {
@@ -70,12 +81,16 @@ func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
 			continue
 		}
 
+		// selectedTypeが指定されている場合、一致するもののみを処理
+		if selectedType != "" && chatType != selectedType {
+			continue
+		}
+
 		chat := structs.Chat{
 			ChatId: chatId,
 			Type:   chatType,
 		}
 
-		// Participantsを手動で設定
 		if participants, ok := data["participants"].([]interface{}); ok {
 			for _, p := range participants {
 				if participantMap, ok := p.(map[string]interface{}); ok {
@@ -88,8 +103,11 @@ func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
 			}
 		}
 
-		// DMの場合、相手のユーザー名を取得
-		if chatType == "dm" && contains(chat.Participants, uid) {
+		if chatType == "group" {
+            if chatName, ok := data["chatName"].(string); ok {
+                chat.ChatName = chatName
+            }
+        } else if chatType == "dm" && contains(chat.Participants, uid) {
 			// 相手のuidを取得
 			var otherUid string
 			for _, participant := range chat.Participants {
@@ -121,6 +139,22 @@ func GetAllChats(uid string) (structs.GetAllChatsRes, error) {
 	}
 
 	return response, nil
+}
+
+func getUid(email string) string {
+	ctx := context.Background()
+	client, err := utils.NewFirestoreClient()
+	if err != nil {
+		return ""
+	}
+	defer client.Close()
+
+	user := client.Collection("users").Where("email", "==", email).Documents(ctx)
+	doc, err := user.Next()
+	if err != nil {
+		return ""
+	}
+	return doc.Ref.ID
 }
 
 // participantsにuidが含まれているかを確認する

@@ -19,7 +19,7 @@ func HandleChatCreation(c *gin.Context) {
 		return
 	}
 
-	result, err := services.ChatCreation(req.Type, req.ChatName, req.Participants)
+	result, err := services.ChatCreation(req.Type, req.ChatName, req.ChatCreatorId, req.ParticipantsEmails)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
@@ -29,13 +29,14 @@ func HandleChatCreation(c *gin.Context) {
 
 func HandleGetAllChats(c *gin.Context) {
 	uid := c.Query("uid")
+	selectedType := c.Query("type")
 	if uid == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "'uid is required.",
 		})
 		return
 	}
-	result, err := services.GetAllChats(uid)
+	result, err := services.GetAllChats(uid, selectedType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return

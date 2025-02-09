@@ -11,10 +11,15 @@ type Participant struct {
 	Uid string `json:"Uid" binding:"required"`
 }
 
+type ParticipantsEmail struct {
+	Email string `json:"email" binding:"required"`
+}
+
 type ChatCreationReq struct {
 	Type         string        `json:"type" binding:"required"`
 	ChatName     string        `json:"chatName"`
-	Participants []Participant `json:"participants" binding:"required"`
+	ChatCreatorId string `json:"chatCreatorId" binding:"required"`
+	ParticipantsEmails []ParticipantsEmail `json:"participantsEmails" binding:"required"`
 }
 
 type ChatCreationRes struct {
@@ -26,9 +31,4 @@ type ChatCreationRes struct {
 
 type GetAllChatsRes struct {
 	Chats []Chat `json:"chats" binding:"required"`
-}
-
-type EditMessageRes struct {
-	MessageId  string `json:"chatId" binding:"required"`
-	NewContent string `json:"newContent"`
 }
