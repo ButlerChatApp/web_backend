@@ -59,6 +59,25 @@ func PostMessage(chatId, senderId, content string) (structs.PostMessageRes, erro
 	messageId := uuid.New().String()
 	jst, _ := time.LoadLocation("Asia/Tokyo")
 	timestamp := time.Now().In(jst)
+
+	// メッセージを作成する前にチャットを更新
+	chatRef := client.Collection("chats").Where("chatId", "==", chatId).Limit(1)
+	chatDocs, err := chatRef.Documents(ctx).GetAll()
+	if err != nil || len(chatDocs) == 0 {
+		return structs.PostMessageRes{}, err
+	}
+
+	// チャットのupdatedAtを更新
+	_, err = chatDocs[0].Ref.Update(ctx, []firestore.Update{
+		{
+			Path:  "updatedAt",
+			Value: timestamp,
+		},
+	})
+	if err != nil {
+		return structs.PostMessageRes{}, err
+	}
+
 	messageData := map[string]interface{}{
 		"messageId":  messageId,
 		"chatId":     chatId,
