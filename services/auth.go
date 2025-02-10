@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"time"
@@ -66,11 +67,11 @@ func SignUp(userName, email, password string) structs.SignUpRes {
 	}
 }
 
-func SignIn(email, password string) structs.SignInRes {
+func SignIn(email, password string) (structs.SignInRes, error) {
 	ctx := context.Background()
 	client, err := utils.NewFirestoreClient()
 	if err != nil {
-		return structs.SignInRes{Message: "Failed to connect to Firestore."}
+		return structs.SignInRes{Message: "Failed to connect to Firestore."}, err
 	}
 	defer client.Close()
 
@@ -79,7 +80,7 @@ func SignIn(email, password string) structs.SignInRes {
 	doc, err := iter.Next()
 	// ユーザーが存在しない場合
 	if err != nil || !doc.Exists() {
-		return structs.SignInRes{Message: "Invalid credentials."}
+		return structs.SignInRes{Message: "User not found."}, err
 	}
 
 	storedPassword := doc.Data()["hashed_password"].(string)
@@ -88,21 +89,22 @@ func SignIn(email, password string) structs.SignInRes {
 
 	// パスワード認証
 	if !utils.CheckPasswordHash(password, storedPassword) {
-		return structs.SignInRes{Message: "Invalid credentials."}
+		return structs.SignInRes{Message: "Invalid credentials."}, errors.New("Invalid credentials")
 	}
 
 	// JWT発行
 	token, err := generateJWT(userName)
 	if err != nil {
-		return structs.SignInRes{
-			Message: "Failed to generate token: " + err.Error(),
-		}
+		response := structs.SignInRes{Message: "Failed to generate token."}
+		return response, err
 	}
 
-	return structs.SignInRes{
-		Uid:      uid,
+	response := structs.SignInRes{
+		Uid: uid,
 		UserName: userName,
-		Message:  "Successfully signed in.",
-		Token:    token,
+		Message: "Successfully signed in.",
+		Token: token,
 	}
+
+	return response, nil
 }

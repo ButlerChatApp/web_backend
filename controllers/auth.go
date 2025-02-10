@@ -33,6 +33,9 @@ func HandleSignIn(c *gin.Context) {
 		return
 	}
 
-	result := services.SignIn(req.Email, req.Password)
+	result, err := services.SignIn(req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err)
+	}
 	c.JSON(http.StatusOK, result)
 }
