@@ -1,20 +1,4 @@
 go.sum
 .env
 /tmp
-firebase_service_account.json
-
-
-func main() {
-	r := routes.Router()
-
-	// Cloud Run用にPORTを環境変数から取得
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"  // デフォルトポート
-	}
-
-	// エラーハンドリングを含む単一のRun呼び出し
-	if err := r.Run(":" + port); err != nil {
-		log.Fatalf("Failed to run application: %v", err)
-	}
-}
+service_account.json

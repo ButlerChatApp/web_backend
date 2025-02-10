@@ -6,6 +6,7 @@ toolchain go1.23.5
 
 require (
 	cloud.google.com/go/firestore v1.18.0
+	cloud.google.com/go/vertexai v0.13.3
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-gonic/gin v1.10.0
@@ -19,6 +20,7 @@ require (
 require (
 	cel.dev/expr v0.19.0 // indirect
 	cloud.google.com/go v0.117.0 // indirect
+	cloud.google.com/go/aiplatform v1.69.0 // indirect
 	cloud.google.com/go/auth v0.14.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.7 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
