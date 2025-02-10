@@ -63,3 +63,22 @@ func HandleGetSelectedSummary(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result)
 }
+
+func HandleGetRecentSummaries(c *gin.Context) {
+	uid := c.Query("uid")
+
+	if uid == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid value.",
+		})
+		return
+	}
+
+	result, err := services.GetRecentSummaries(uid)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
