@@ -16,9 +16,9 @@ type ParticipantsEmail struct {
 }
 
 type ChatCreationReq struct {
-	Type         string        `json:"type" binding:"required"`
-	ChatName     string        `json:"chatName"`
-	ChatCreatorId string `json:"chatCreatorId" binding:"required"`
+	Type               string              `json:"type" binding:"required"`
+	ChatName           string              `json:"chatName"`
+	ChatCreatorId      string              `json:"chatCreatorId" binding:"required"`
 	ParticipantsEmails []ParticipantsEmail `json:"participantsEmails" binding:"required"`
 }
 

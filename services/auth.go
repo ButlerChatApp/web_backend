@@ -100,10 +100,10 @@ func SignIn(email, password string) (structs.SignInRes, error) {
 	}
 
 	response := structs.SignInRes{
-		Uid: uid,
+		Uid:      uid,
 		UserName: userName,
-		Message: "Successfully signed in.",
-		Token: token,
+		Message:  "Successfully signed in.",
+		Token:    token,
 	}
 
 	return response, nil

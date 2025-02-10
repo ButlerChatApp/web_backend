@@ -60,12 +60,12 @@ func PostMessage(chatId, senderId, content string) (structs.PostMessageRes, erro
 	jst, _ := time.LoadLocation("Asia/Tokyo")
 	timestamp := time.Now().In(jst)
 	messageData := map[string]interface{}{
-		"messageId": messageId,
-		"chatId":    chatId,
-		"senderId":  senderId,
+		"messageId":  messageId,
+		"chatId":     chatId,
+		"senderId":   senderId,
 		"senderName": senderName,
-		"content":   content,
-		"timestamp": timestamp,
+		"content":    content,
+		"timestamp":  timestamp,
 	}
 
 	_, err = client.Collection("messages").Doc(messageId).Set(ctx, messageData)
@@ -142,7 +142,6 @@ func DeleteMessage(messageId string) (structs.DeleteMessageRes, error) {
 
 	return response, nil
 }
-
 
 func getUserName(uid string) (string, error) {
 	ctx := context.Background()

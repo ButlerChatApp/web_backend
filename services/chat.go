@@ -104,10 +104,10 @@ func GetAllChats(uid, selectedType string) (structs.GetAllChatsRes, error) {
 		}
 
 		if chatType == "group" {
-            if chatName, ok := data["chatName"].(string); ok {
-                chat.ChatName = chatName
-            }
-        } else if chatType == "dm" && contains(chat.Participants, uid) {
+			if chatName, ok := data["chatName"].(string); ok {
+				chat.ChatName = chatName
+			}
+		} else if chatType == "dm" && contains(chat.Participants, uid) {
 			// 相手のuidを取得
 			var otherUid string
 			for _, participant := range chat.Participants {
