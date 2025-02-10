@@ -115,6 +115,51 @@ func RequestSummary(uid, content string) (structs.SummaryRequestRes, error) {
 	return response, nil
 }
 
+func GetRecentSummaries(uid string) (structs.GetSummariesRes, error) {
+	ctx := context.Background()
+	client, err := utils.NewFirestoreClient()
+	if err != nil {
+		return structs.GetSummariesRes{}, err
+	}
+	defer client.Close()
+
+	iter := client.Collection("summaries").
+	Where("uid", "==", uid).
+	OrderBy("timestamp", firestore.Desc).
+	Limit(3).
+	Documents(ctx)
+
+	var summaries []structs.Summary
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return structs.GetSummariesRes{}, err
+		}
+
+		var summary structs.Summary
+		if err := doc.DataTo(&summary); err != nil {
+			return structs.GetSummariesRes{}, err
+		}
+		summary.SummaryId = doc.Ref.ID
+		summaries = append(summaries, summary)
+	}
+
+	// サマリーが見つからない場合は空の配列を返す
+	if len(summaries) == 0 {
+		return structs.GetSummariesRes{
+			Summaries: []structs.Summary{},
+		}, nil
+	}
+
+	return structs.GetSummariesRes{
+		Summaries: summaries,
+	}, nil
+}
+
 func generateSummaryAI(content string) (string, error) {
     ctx := context.Background()
     client, err := utils.CreateVertexAIClient()

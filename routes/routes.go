@@ -14,7 +14,7 @@ func Router() *gin.Engine {
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://butler-front-git-main-yutokohiruimaki-lddcojps-projects.vercel.app", "http://localhost:3000"}, // フロントエンドのURLを指定
+		AllowOrigins: []string{"https://butler-front.vercel.app", "http://localhost:3000"}, // フロントエンドのURLを指定
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{
 			"Origin",
@@ -73,6 +73,10 @@ func Router() *gin.Engine {
 
 	r.GET("/api/summary/details", func(c *gin.Context) {
 		controllers.HandleGetSelectedSummary(c)
+	})
+
+	r.GET("/api/summary/recent", func(c *gin.Context) {
+		controllers.HandleGetRecentSummaries(c)
 	})
 
 	r.POST("/api/summary", func(c *gin.Context) {
